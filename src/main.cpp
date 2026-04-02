@@ -1,5 +1,5 @@
-#include <Arduino.h>
-#include <FreeRTOS_SAMD51.h>
+#include "Arduino.h"
+#include "FreeRTOS_SAMD51.h"
 #include "tasks.h"
 
 
@@ -7,12 +7,21 @@ TaskHandle_t Handle_LidarTask;
 TaskHandle_t Handle_LEDTask;
 TaskHandle_t Handle_PrintTask;    
 
-// Function declarations
 
-void ButtonISR() //ISR D5
+//Interrupts
+void Button8ISR() //ISR D5
 {
     captureRequested = true; 
 }
+void Button7ISR() //ISR D7
+{
+    captureRequested = true; 
+}
+void Button6ISR() //ISR D6
+{
+    captureRequested = true; 
+}
+
 
 void setup()
 {
@@ -20,7 +29,9 @@ void setup()
     pinMode(8, INPUT); //Button
     pinMode(10, OUTPUT); //LCD Backlight Pin
     digitalWrite(10, HIGH); //Turn backlight on the LCD
-    attachInterrupt(digitalPinToInterrupt(8), ButtonISR, RISING);
+    attachInterrupt(digitalPinToInterrupt(8), Button8ISR, RISING);
+    attachInterrupt(digitalPinToInterrupt(7), Button7ISR, RISING);
+    attachInterrupt(digitalPinToInterrupt(6), Button6ISR, RISING);
 
     Serial.begin(115200); 
     Serial1.begin(115200); // LiDAR Baud Rate
@@ -32,11 +43,11 @@ void setup()
     }
 
    
-    // If you don't open the serial monitor, the tasks will NEVER start.
-    while (!Serial) {
-        digitalWrite(LED_BUILTIN, HIGH); delay(100);
-        digitalWrite(LED_BUILTIN, LOW);  delay(100);
-    }
+    // // If you don't open the serial monitor, the tasks will NEVER start.
+    // while (!Serial) {
+    //     digitalWrite(LED_BUILTIN, HIGH); delay(100);
+    //     digitalWrite(LED_BUILTIN, LOW);  delay(100);
+    // }
 
     
     xTaskCreate(LidarTask, "Lidar_Task", 512, NULL, 1, &Handle_LidarTask);

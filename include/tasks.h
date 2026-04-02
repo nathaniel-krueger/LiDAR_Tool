@@ -1,8 +1,8 @@
 #ifndef TASKS_H
 #define TASKS_H
 
-#include <Arduino.h>
-#include <FreeRTOS_SAMD51.h>
+#include "Arduino.h"
+#include "FreeRTOS_SAMD51.h"
 
 struct Scanner_Data
 {

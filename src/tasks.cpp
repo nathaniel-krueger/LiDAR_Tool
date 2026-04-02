@@ -1,7 +1,7 @@
 #include "tasks.h"
-#include <Adafruit_GFX.h>
-#include <Adafruit_ST7789.h>
-#include <SPI.h>
+#include "Adafruit_GFX.h"
+#include "Adafruit_ST7789.h"
+#include "SPI.h"
 
 volatile Scanner_Data currentLidar; //Current distance of what the LiDAR is seeing
 volatile bool captureRequested = false;
@@ -50,10 +50,10 @@ void LidarTask(void *pvParameters)
                     {
                         // Take a snapshot of the clean data
                         savedDistance = currentLidar.distance;
-                        captureRequested = false;
+                        captureRequested = false; // Clear the interrupt flag
                         readyToPrint = true; // Set flag to indicate we have new data ready to print
                     }
-                    // Print to terminal    //This was for debugging, but I left it in to show the data is being read correctly. You can comment it out if you want.
+                    // Print to terminal    //This was for debugging
                     // Serial.print("Distance: ");
                     // Serial.print(currentLidar.distance);
                     // Serial.println(" cm");
@@ -69,8 +69,7 @@ void LEDTask(void *pvParameters) // This is to make sure the CPU doesnt get lock
 {
     for (;;)
     {
-        digitalWrite(LED_BUILTIN, HIGH); // Red LED (L)
-
+        digitalWrite(LED_BUILTIN, HIGH); // Red LED
         vTaskDelay(pdMS_TO_TICKS(500));
         digitalWrite(LED_BUILTIN, LOW);
         vTaskDelay(pdMS_TO_TICKS(500));
@@ -83,14 +82,14 @@ void PrintTask(void *pvParameters)
 {
     tft.init(240, 320); // Initialize the ST7789 chip
     Serial.println(">>> PrintTask: Screen Init SUCCESS!");
-    tft.setRotation(1);           // 1 Landscape, 2 for Portrait
+    tft.setRotation(1);           // 1 for Landscape, 2 for Portrait
     tft.fillScreen(ST77XX_BLACK); // Clear the screen
 
     // Initial static text
     tft.setTextSize(3);
     tft.setTextColor(ST77XX_WHITE);
     tft.setCursor(10, 20);
-    tft.print("LiDAR Dashboard  V1.0"); // Title message at top of screen
+    tft.print("LiDAR Dashboard   V1.0"); // Title message at top of screen
 
     uint16_t lastDistance = 0xFFFF; // Bogus number to force the first draw
 
