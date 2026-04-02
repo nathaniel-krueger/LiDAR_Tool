@@ -1,11 +1,12 @@
 #include "Arduino.h"
 #include "FreeRTOS_SAMD51.h"
 #include "tasks.h"
-
+#include "Wire.h"
 
 TaskHandle_t Handle_LidarTask;
 TaskHandle_t Handle_LEDTask;
 TaskHandle_t Handle_PrintTask;    
+TaskHandle_t Handle_GyroTask;
 
 
 //Interrupts
@@ -33,8 +34,11 @@ void setup()
     attachInterrupt(digitalPinToInterrupt(7), Button7ISR, RISING);
     attachInterrupt(digitalPinToInterrupt(6), Button6ISR, RISING);
 
-    Serial.begin(115200); 
+    Serial.begin(115200); //USB Serial Baud Rate
     Serial1.begin(115200); // LiDAR Baud Rate
+
+    Wire.begin();             // Setup I2C
+    Wire.setClock(104000);    // 104kHz I2C clock speed for Gyro
 
     // Fast blinks to prove the CPU is starting
     for(int i=0; i<5; i++) {
@@ -53,6 +57,7 @@ void setup()
     xTaskCreate(LidarTask, "Lidar_Task", 512, NULL, 1, &Handle_LidarTask);
     xTaskCreate(LEDTask,   "LED_Task",   512, NULL, 1, &Handle_LEDTask);
     xTaskCreate(PrintTask,   "Print_Task",   512, NULL, 1, &Handle_PrintTask);
+    xTaskCreate(GyroTask,   "Gyro_Task",   512, NULL, 1, &Handle_GyroTask);
 
     Serial.println("Scheduler Starting..."); 
     vTaskStartScheduler(); 

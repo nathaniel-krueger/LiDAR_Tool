@@ -10,12 +10,15 @@ struct Scanner_Data
     uint16_t strength = 0;
     float temp = 0.0;
 };
+
 extern volatile bool captureRequested;
 extern volatile uint16_t savedDistance;
 extern volatile int SavedData;
+extern volatile int16_t gyroX, gyroY, gyroZ;
 
 void LEDTask(void *pvParameters);
 void LidarTask(void *pvParameters);
 void PrintTask(void *pvParameters);
+void GyroTask(void *pvParameters);
 
 #endif
